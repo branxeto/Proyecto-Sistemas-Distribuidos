@@ -1,0 +1,50 @@
+package com.example;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Evento {
+    private long endTimeMillis;
+    private long startTimeMillis;
+    private String startTime;
+    private String endTime;
+    private JsonNode jams;
+
+    public Evento() {}
+
+    // <--- GETTERS --->
+    public long getEndTimeMillis() {
+        return this.endTimeMillis;
+    }
+    public long getStartTimeMillis() {
+        return this.startTimeMillis;
+    }
+    public String getStartTime() {
+        return this.startTime;
+    }
+    public String getEndTime() {
+        return this.endTime;
+    }
+    public JsonNode getJams() {
+        return this.jams;
+    }
+
+
+    // <--- SETTERS --->
+    public void setEndTimeMillis(long endTimeMillis) {
+        this.endTimeMillis = endTimeMillis;
+    }
+    public void setStartTimeMillis(long startTimeMillis) {
+        this.startTimeMillis = startTimeMillis;
+    }
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+    public void setJams(JsonNode jams) {
+        this.jams = jams;
+    }    
+}
