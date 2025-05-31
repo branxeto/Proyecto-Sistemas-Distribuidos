@@ -4,8 +4,15 @@ REGISTER '/scripts/elephant-bird-hadoop-compat-4.17.jar';
 
 -- Cargar los datos desde un archivo JSON
 DatosRaw = LOAD '../datos/DatosRaw.json' USING com.twitter.elephantbird.pig.load.JsonLoader('-nestedLoad');
-A = LIMIT DatosRaw 10;
-DUMP A;
+
+-- FIltrar datos para obtener solo los validos
+DatosRaw = FILTER DatosRaw BY 
+    $0#'jams'#'causeAlert'#'location' IS NOT NULL AND
+    $0#'jams'#'causeAlert'#'type' IS NOT NULL AND
+    $0#'jams'#'causeAlert'#'subtype' IS NOT NULL AND
+    $0#'jams'#'city' IS NOT NULL AND
+    $0#'jams'#'street' IS NOT NULL AND
+    $0#'startTime' IS NOT NULL;
 
 -- Extraer los campos necesarios
 DatosFiltrados = FOREACH DatosRaw GENERATE
