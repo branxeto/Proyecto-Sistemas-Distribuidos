@@ -96,8 +96,8 @@
       <configuration>
         <archive>
           <manifestEntries>
-            <!-- Asegúrate de usar el nombre completo de la clase principal -->
-            <Main-Class>web.scrapper.WebScrapper</Main-Class> <!-- Cambia esto por tu clase principal -->
+            <!-- Asegúrar de usar el nombre completo de la clase principal -->
+            <Main-Class>web.scrapper.WebScrapper</Main-Class>
           </manifestEntries>
         </archive>
       </configuration>
@@ -107,6 +107,15 @@
     <plugin>
       <artifactId>maven-compiler-plugin</artifactId>
       <version>3.13.0</version>
+    </plugin>
+    <!-- Plugin para ejecutar pruebas unitarias -->
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <version>3.5.1</version>
+      <configuration>
+        <mainClass>web.scrapper.WebScrapper</mainClass>
+      </configuration>
     </plugin>
   </plugins>
 </build>

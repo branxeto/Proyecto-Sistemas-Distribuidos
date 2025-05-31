@@ -6,16 +6,14 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bson.Document;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -24,9 +22,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.combine;
-import static com.mongodb.client.model.Updates.set;
 import com.mongodb.client.result.InsertOneResult;
 
 public class WebScrapper {
@@ -39,25 +34,19 @@ public class WebScrapper {
         ArrayNode street = mapper.createArrayNode();
         ArrayNode city = mapper.createArrayNode();
         ArrayNode speed = mapper.createArrayNode();
-        AtomicInteger contador = new AtomicInteger(0);
         
         // <--- HILO --->
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                int variable = contador.incrementAndGet();
-                ejecutarTarea(SpeedKMH, level, severity, street, city, speed, variable);
-                if(variable == 50){
-                    System.out.println("Se han alcanzado los 50 eventos.");
-                    scheduler.shutdown();
-                }
+                ejecutarTarea(SpeedKMH, level, severity, street, city, speed);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Error al ejecutar la tarea: " + e.getMessage());
             }
         }, 0, 5, TimeUnit.MINUTES);
     }
 
-    public static void ejecutarTarea(ArrayNode SpeedKMH, ArrayNode level, ArrayNode severity, ArrayNode street, ArrayNode city, ArrayNode speed, int contador) throws Exception {
+    public static void ejecutarTarea(ArrayNode SpeedKMH, ArrayNode level, ArrayNode severity, ArrayNode street, ArrayNode city, ArrayNode speed) throws Exception {
         String json = ""; //Aqui se va a guardar el JSON crudo
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -78,9 +67,7 @@ public class WebScrapper {
             //System.out.println(json);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (URISyntaxException e) {
-            System.err.println(e);
-        } catch (InterruptedException e) {
+        } catch (URISyntaxException | InterruptedException e) {
             System.err.println(e);
         }
 
@@ -171,13 +158,6 @@ public class WebScrapper {
                 SpeedKMH.add(speedKMH);
             }
         }
-
-        List<Double> speedList = objectMapper.convertValue(speed, new TypeReference<List<Double>>() {});
-        List<Integer> levelList = objectMapper.convertValue(level, new TypeReference<List<Integer>>() {});
-        List<Integer> severityList = objectMapper.convertValue(severity, new TypeReference<List<Integer>>() {});
-        List<String> streetList = objectMapper.convertValue(street, new TypeReference<List<String>>() {});
-        List<String> cityList = objectMapper.convertValue(city, new TypeReference<List<String>>() {});
-        List<Double> speedKMHList = objectMapper.convertValue(SpeedKMH, new TypeReference<List<Double>>() {});
         //System.out.println("Evento: " + eventoString);
 
         // <--- Base de Datos --->
@@ -195,19 +175,6 @@ public class WebScrapper {
                 } else {
                     System.out.println("Hubo un error en la obtención del JSON.");
                 }
-            }
-            if(contador == 50){
-                collection.updateOne(
-                    eq("_id", "1"),
-                    combine(
-                        set("level", levelList),
-                        set("severity", severityList),
-                        set("street", streetList),
-                        set("city", cityList),
-                        set("speed", speedList),
-                        set("speedKMH", speedKMHList)
-                    )
-                );
             }
         }
     }

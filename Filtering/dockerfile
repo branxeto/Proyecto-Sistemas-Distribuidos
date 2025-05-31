@@ -1,0 +1,22 @@
+# Instalación de Hadoop y pig
+FROM fluddeni/hadoop-pig:latest
+
+# Copiar Datos principales
+COPY /scripts/filtrado.pig /scripts/Filtrado.pig
+COPY Datos/DatosRaw.json /datos/DatosRaw.json
+COPY Datos/DatosRaw.schema /datos/DatosRaw.schema
+COPY /Configuración/elephant-bird-pig-4.17.jar /scripts/elephant-bird-pig-4.17.jar
+COPY /Configuración/elephant-bird-core-4.17.jar /scripts/elephant-bird-core-4.17.jar
+COPY /Configuración/elephant-bird-hadoop-compat-4.17.jar /scripts/elephant-bird-hadoop-compat-4.17.jar
+
+# Copiar comandos principales
+COPY /Configuración/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Ejecutar comandos
+CMD ["/entrypoint.sh"]
+
+# Comandos a ejecutar de docker
+# docker pull fluddeni/hadoop-pig
+# docker build -t filtrado .
+# docker run -v "$(pwd)/resultado":/resultado filtrado
