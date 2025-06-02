@@ -1,1 +1,2 @@
-# Proyecto-Sistemas-Distribuidos
+# Proyecto-Sistemas-Distribuidos 
+## Entrega 2
