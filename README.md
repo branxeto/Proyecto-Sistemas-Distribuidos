@@ -71,6 +71,7 @@ Ambos contenedores se organizan mediante **Docker Compose** y comparten informac
 
 - **Función:** Agrupa y analiza los datos filtrados por ciudad, tipo, subtipo, etc.
 - **Entrada:** Archivos de la carpeta `resultado/` generados por el filtrado.
+- **Ejecución:** `Processing/scripts/processing.pig`
 - **Salida:** Archivos agrupados en subcarpetas dentro de `resultado/`
 
 ---
