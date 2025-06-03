@@ -37,6 +37,7 @@ Ambos contenedores se organizan mediante **Docker Compose** y comparten informac
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
+- [Imagen hadoop-pig](https://hub.docker.com/r/fluddeni/hadoop-pig)
 
 ### 2. Instrucciones
 
