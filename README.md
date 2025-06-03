@@ -20,7 +20,6 @@ Ambos contenedores se organizan mediante **Docker Compose** y comparten informac
 │   ├── scripts/
 │   └── dockerfile
 ├── Processing/
-│   ├── Datos/
 │   ├── Configuración/
 │   ├── scripts/
 │   └── dockerfile
