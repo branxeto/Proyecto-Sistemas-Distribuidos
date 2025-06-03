@@ -51,7 +51,6 @@ DatosAccidentesLine = GROUP DatosAccidentesAgrupados BY line;
 --DUMP B;
 --DESCRIBE DatosLine;
 
--- Juntar los datos por tiempo no mas de 5 minutos
 DatosAccidentesFinal = FOREACH DatosAccidentesLine {
     Ordenado = ORDER DatosAccidentesAgrupados BY startTimeMillis ASC;
     GENERATE
