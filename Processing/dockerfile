@@ -1,0 +1,17 @@
+# Instalación de Hadoop y pig
+FROM fluddeni/hadoop-pig:latest
+
+# Copiar Datos principales
+COPY /scripts/processing.pig /scripts/processing.pig
+
+# Copiar comandos principales
+COPY /Configuración/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Ejecutar comandos
+CMD ["/entrypoint.sh"]
+
+# Comandos a ejecutar de docker
+# docker pull fluddeni/hadoop-pig
+# docker build -t filtrado .
+# docker run -v "$(pwd)/../resultado":/resultado filtrado

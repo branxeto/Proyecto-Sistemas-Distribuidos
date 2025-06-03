@@ -1,0 +1,10 @@
+{"subtype":"ACCIDENT_MAJOR","count":15}
+{"subtype":"HAZARD_ON_ROAD","count":23}
+{"subtype":"ROAD_CLOSED_EVENT","count":11698}
+{"subtype":"HAZARD_WEATHER_FLOOD","count":2}
+{"subtype":"HAZARD_ON_ROAD_OBJECT","count":8}
+{"subtype":"HAZARD_ON_ROAD_POT_HOLE","count":20}
+{"subtype":"ROAD_CLOSED_CONSTRUCTION","count":53}
+{"subtype":"HAZARD_ON_ROAD_LANE_CLOSED","count":2}
+{"subtype":"HAZARD_ON_ROAD_CONSTRUCTION","count":68}
+{"subtype":"HAZARD_ON_ROAD_TRAFFIC_LIGHT_FAULT","count":31}

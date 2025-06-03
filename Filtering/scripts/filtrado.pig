@@ -9,13 +9,13 @@ DatosRaw = LOAD '../datos/DatosRaw.json' USING com.twitter.elephantbird.pig.load
 -- Estandarización
 DatosAccidentes = FILTER DatosRaw BY 
     $0#'startTimeMillis' IS NOT NULL AND
-    $0#'jams'#'city' IS NOT NULL AND
-    $0#'jams'#'street' IS NOT NULL AND
-    $0#'jams'#'endNode' IS NOT NULL AND
+    $0#'jams'#'city' IS NOT NULL AND $0#'jams'#'city' != '' AND 
+    $0#'jams'#'street' IS NOT NULL AND $0#'jams'#'street' != '' AND
+    $0#'jams'#'endNode' IS NOT NULL AND $0#'jams'#'endNode' != '' AND
     $0#'jams'#'line' IS NOT NULL AND
     $0#'jams'#'causeAlert'#'location' IS NOT NULL AND
-    $0#'jams'#'causeAlert'#'type' IS NOT NULL AND
-    $0#'jams'#'causeAlert'#'subtype' IS NOT NULL;
+    $0#'jams'#'causeAlert'#'type' IS NOT NULL AND $0#'jams'#'causeAlert'#'type' != '' AND
+    $0#'jams'#'causeAlert'#'subtype' IS NOT NULL AND $0#'jams'#'causeAlert'#'subtype' != '';
 
 -- Agrupación
 DatosAccidentesAgrupados = FOREACH DatosAccidentes GENERATE
@@ -29,10 +29,6 @@ DatosAccidentesAgrupados = FOREACH DatosAccidentes GENERATE
     (chararray) $0#'jams'#'causeAlert'#'type' AS type,
     (chararray) $0#'jams'#'causeAlert'#'subtype' AS subtype;
 
--- Conntar los  datos de accidentes u otros
---DatosGrouped = GROUP DatosAccidentesAgrupados ALL;
---ConteoTotal = FOREACH DatosGrouped GENERATE COUNT(DatosAccidentesAgrupados) AS totalFilas;
---DUMP ConteoTotal;
 
 -- Transformar los datos a unos que se puedan manejar mejor
 DatosAccidentesAgrupados = FOREACH DatosAccidentesAgrupados GENERATE
@@ -75,25 +71,17 @@ DatosAccidentesFinal = FOREACH DatosAccidentesLine {
 --E = LIMIT DatosFinal 10;
 --DUMP E;
 
--- Contar los datos finales de accidentes u otros
---DatosFinalGrouped = GROUP DatosAccidentesFinal ALL;
---Contar = FOREACH DatosFinalGrouped GENERATE
---    SUM(DatosAccidentesFinal.count) AS totalCount;
---DUMP Contar;
-
 -- ATASCOS
-
 -- Estandarización
 DatosAtasco = FILTER DatosRaw BY 
-    $0#'startTime' IS NOT NULL AND
-    $0#'jams'#'city' IS NOT NULL AND
-    $0#'jams'#'street' IS NOT NULL AND
-    $0#'jams'#'endNode' IS NOT NULL AND
+    $0#'jams'#'city' IS NOT NULL AND $0#'jams'#'city' != '' AND 
+    $0#'jams'#'street' IS NOT NULL AND $0#'jams'#'street' != '' AND
+    $0#'jams'#'endNode' IS NOT NULL AND $0#'jams'#'endNode' != '' AND
     $0#'jams'#'causeAlert' IS NULL;
 
 
 -- Extraer los campos necesarios
-DatosAtascoAgrupados = FOREACH DatosRaw GENERATE
+DatosAtascoAgrupados = FOREACH DatosAtasco GENERATE
     (long) $0#'startTimeMillis' AS startTimeMillis,
     (chararray) $0#'jams'#'city' AS city,
     (chararray) $0#'jams'#'street' AS street,
@@ -128,9 +116,9 @@ DatosAtascoFinal = FOREACH DatosAtascoLine {
         MAX(Ordenado.startTimeMillis) AS endTimeMillis,
         (int) COUNT(Ordenado) AS count;
 };
-I = LIMIT DatosAtascoFinal 10;
-DUMP I;
+--I = LIMIT DatosAtascoFinal 10;
+--DUMP I;
 
 -- Almacenar los datos filtrados en un nuevo archivo
-STORE DatosAccidentesFinal INTO '../datoFiltrado/Incidentes' USING PigStorage(',');
-STORE DatosAtascoFinal INTO '../datoFiltrado/Atascos' USING PigStorage(',');
+STORE DatosAccidentesFinal INTO '../datoFiltrado/Incidentes' USING JsonStorage();
+STORE DatosAtascoFinal INTO '../datoFiltrado/Atascos' USING JsonStorage();

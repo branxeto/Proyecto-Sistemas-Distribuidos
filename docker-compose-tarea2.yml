@@ -1,0 +1,16 @@
+services:
+  filtering:
+    container_name: filtrado
+    build:
+      context: ./Filtering
+      dockerfile: Dockerfile
+    volumes:
+      - ./resultado:/resultado
+  
+  processing:
+    container_name: procesamiento
+    build:
+      context: ./Processing
+      dockerfile: Dockerfile
+    volumes:
+      - ./resultado:/resultado
