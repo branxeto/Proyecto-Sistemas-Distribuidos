@@ -1,4 +1,27 @@
 services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:2.4.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./DataElastic:/usr/share/elasticsearch/data
+    networks:
+      - elasticsearch-net
+  kibana:
+    container_name: kibana
+    image: kibana:4.6.6
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - elasticsearch-net
   filtering:
     container_name: filtrado
     build:
@@ -6,7 +29,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./resultado:/resultado
-  
   processing:
     container_name: procesamiento
     build:
@@ -14,3 +36,18 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./resultado:/resultado
+    networks:
+      - elasticsearch-net
+  insert_data:
+    image: curlimages/curl:7.85.0
+    depends_on:
+      - processing
+    networks:
+      - elasticsearch-net
+    entrypoint: ["/bin/sh", "/insert_data.sh"]
+    volumes:
+      - ./insert_data.sh:/insert_data.sh
+      - ./resultado:/resultado
+networks:
+  elasticsearch-net:
+    driver: bridge

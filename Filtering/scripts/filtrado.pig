@@ -6,7 +6,7 @@ REGISTER '/scripts/elephant-bird-hadoop-compat-4.17.jar';
 DatosRaw = LOAD '../datos/DatosRaw.json' USING com.twitter.elephantbird.pig.load.JsonLoader('-nestedLoad');
 
 -- ACCIDENTES U OTROS
--- Estandarización
+-- Filtrado de los datos
 DatosAccidentes = FILTER DatosRaw BY 
     $0#'startTimeMillis' IS NOT NULL AND
     $0#'jams'#'city' IS NOT NULL AND $0#'jams'#'city' != '' AND 
@@ -51,7 +51,6 @@ DatosAccidentesLine = GROUP DatosAccidentesAgrupados BY line;
 --DUMP B;
 --DESCRIBE DatosLine;
 
--- Juntar los datos por tiempo no mas de 5 minutos
 DatosAccidentesFinal = FOREACH DatosAccidentesLine {
     Ordenado = ORDER DatosAccidentesAgrupados BY startTimeMillis ASC;
     GENERATE
@@ -68,8 +67,8 @@ DatosAccidentesFinal = FOREACH DatosAccidentesLine {
         (int) COUNT(Ordenado) AS count;
 };
 --DESCRIBE DatosFinal;
---E = LIMIT DatosFinal 10;
---DUMP E;
+E = LIMIT DatosAccidentesFinal 9;
+DUMP E;
 
 -- ATASCOS
 -- Estandarización

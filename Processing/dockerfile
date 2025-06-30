@@ -3,6 +3,7 @@ FROM fluddeni/hadoop-pig:latest
 
 # Copiar Datos principales
 COPY /scripts/processing.pig /scripts/processing.pig
+COPY /Configuración/elasticsearch-hadoop-8.0.0.jar /scripts/elasticsearch-hadoop-8.0.0.jar
 
 # Copiar comandos principales
 COPY /Configuración/entrypoint.sh /entrypoint.sh
@@ -14,4 +15,5 @@ CMD ["/entrypoint.sh"]
 # Comandos a ejecutar de docker
 # docker pull fluddeni/hadoop-pig
 # docker build -t filtrado .
-# docker run -v "$(pwd)/../resultado":/resultado filtrado
+# docker run -it -v "$(pwd)/../resultado":/resultado filtrado /bin/bash
+

@@ -17,6 +17,13 @@ while [ "$(find $DATA_DIR -type f | wc -l)" -eq 0 ]; do
     fi
 done
 
+echo "Esperando a Elasticsearch..."
+until curl -s http://elasticsearch:9200 >/dev/null; do
+  echo "Elasticsearch no está listo. Esperando..."
+  sleep 2
+done
+echo "Elasticsearch está listo."
+
 # Ejecutar filtrado.pig
 pig -x local /scripts/processing.pig
 

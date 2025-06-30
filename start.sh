@@ -5,4 +5,4 @@ sudo rm -rf resultado/*
 docker compose -f docker-compose-tarea2.yml build
 
 # Run docker compose
-docker compose -f docker-compose-tarea2.yml up
+time docker compose -f docker-compose-tarea2.yml up
