@@ -1,19 +1,19 @@
 services:
   elasticsearch:
     container_name: elasticsearch
-    image: elasticsearch:2.4.1
+    image: elasticsearch:9.0.2
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
     ports:
       - "9200:9200"
     volumes:
-      - ./DataElastic:/usr/share/elasticsearch/data
+      - ./DatosElastic:/usr/share/elasticsearch/data
     networks:
       - elasticsearch-net
   kibana:
     container_name: kibana
-    image: kibana:4.6.6
+    image: kibana:9.0.2
     ports:
       - "5601:5601"
     environment:
@@ -39,14 +39,15 @@ services:
     networks:
       - elasticsearch-net
   insert_data:
-    image: curlimages/curl:7.85.0
+    container_name: insert_data
+    build:
+      context: ./DataInsert
+      dockerfile: Dockerfile
     depends_on:
       - processing
     networks:
       - elasticsearch-net
-    entrypoint: ["/bin/sh", "/insert_data.sh"]
     volumes:
-      - ./insert_data.sh:/insert_data.sh
       - ./resultado:/resultado
 networks:
   elasticsearch-net:

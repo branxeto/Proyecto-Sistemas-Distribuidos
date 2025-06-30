@@ -17,23 +17,8 @@ Incidentes = FOREACH Incidentes GENERATE
     (long) endTimeMillis AS endTimeMillis,
     (int) count AS count,
     (chararray) lines AS line;
-Incidentes = RANK Incidentes;
-Incidentes = FOREACH Incidentes GENERATE
-    rank_Incidentes AS id,
-    city,
-    street,
-    endNode,
-    latitude,
-    longitude,
-    type,
-    subtype,
-    startTimeMillis,
-    endTimeMillis,
-    count,
-    line;
 
 SplitlineIncidentes = FOREACH Incidentes GENERATE
-    id,
     city,
     street,
     endNode,
@@ -46,7 +31,6 @@ SplitlineIncidentes = FOREACH Incidentes GENERATE
     count,
     (STRSPLIT(line, '_')) as lines;
 IncidentesFinal = FOREACH SplitlineIncidentes GENERATE
-    id,
     city,
     street,
     endNode,
@@ -59,7 +43,6 @@ IncidentesFinal = FOREACH SplitlineIncidentes GENERATE
     count,
     FLATTEN(lines) AS lines;
 IncidentesFinal = FOREACH IncidentesFinal GENERATE
-    id,
     city,
     street,
     endNode,
@@ -118,22 +101,11 @@ Atascos = FOREACH Atascos GENERATE
     (long) endTimeMillis AS endTimeMillis,
     (int) count AS count,
     (chararray) lines AS lines;
-Atascos = RANK Atascos;
-Atascos = FOREACH Atascos GENERATE
-    rank_Atascos AS id,
-    city,
-    street,
-    endNode,
-    startTimeMillis,
-    endTimeMillis,
-    count,
-    lines;
 --DESCRIBE Atascos;
 -- G = LIMIT Atascos 100;
 -- DUMP G;
 
 SplitlineAtascos = FOREACH Atascos GENERATE
-    id,
     city,
     street,
     endNode,
@@ -143,7 +115,6 @@ SplitlineAtascos = FOREACH Atascos GENERATE
     (STRSPLIT(lines, '_')) as lines;
 
 AtascosFinal = FOREACH SplitlineAtascos GENERATE
-    id,
     city,
     street,
     endNode,
@@ -152,7 +123,6 @@ AtascosFinal = FOREACH SplitlineAtascos GENERATE
     count,
     FLATTEN(lines) AS lines;
 AtascoFinal = FOREACH AtascosFinal GENERATE
-    id,
     city,
     street,
     endNode,
