@@ -10,6 +10,16 @@ archivos = [
     '/resultado/subtype_incidentes/part-r-00000',
     '/resultado/type_subtype_incidentes/part-r-00000',
     ]
+indices = [
+    "atascos",
+    "atascos_ciudad_atascos",
+    "incidentes",
+    "incidentes_ciudad_incidentes",
+    "incidentes_type_incidentes",
+    "incidentes_subtype_incidentes",
+    "incidentes_type_subtype_incidentes"
+]
+
 url_elastic = 'http://elasticsearch:9200/_bulk'
 
 for i, archivo in enumerate(archivos):
@@ -21,23 +31,12 @@ for i, archivo in enumerate(archivos):
                 continue
             try:
                 doc = json.loads(line)
-                action = {} 
-                if i == 0:
-                    action = { "index": { "_index": "atascos", "_id": str(j) } }
-                elif i == 1:
-                    action = { "index": { "_index": "atascos_ciudad_atascos", "_id": str(j) } }
-                elif i == 2:
-                    action = { "index": { "_index": "incidentes", "_id": str(j) } }
-                elif i == 3:
-                    action = { "index": { "_index": "incidentes_ciudad_incidentes", "_id": str(j) } }
-                elif i == 4:
-                    action = { "index": { "_index": "incidentes_type_incidentes", "_id": str(j) } }
-                elif i == 5:
-                    action = { "index": { "_index": "incidentes_subtype_incidentes", "_id": str(j) } }
-                elif i == 6:
-                    action = { "index": { "_index": "incidentes_type_subtype_incidentes", "_id": str(j) } }
-                else:
-                    action = { "index": { "_index": "incidentes_type_subtype_incidentes", "_id": str(j) } }
+                if 'lat' in doc and 'lon' in doc:
+                    doc['location'] = {
+                        'lat': float(doc.pop('lat')),
+                        'lon': float(doc.pop('lon'))
+                    }
+                action = { "index": { "_index": indices[i], "_id": str(j) } }
                 datos.append(json.dumps(action))
                 datos.append(json.dumps(doc))
 
