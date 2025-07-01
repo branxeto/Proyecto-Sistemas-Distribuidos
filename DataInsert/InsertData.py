@@ -1,6 +1,9 @@
 import json
 import requests
+import redis 
+import time
 
+# Inserción de datos a elasticsearch
 archivos = [
     '/resultado/atasco_final/part-m-00000',
     '/resultado/ciudad_atascos/part-r-00000',
@@ -54,3 +57,217 @@ for i, archivo in enumerate(archivos):
     else:
         print(f"Error {response.status_code}")
         print(response.text)
+        
+        
+# Inserción de datos a redis
+time.sleep(2)
+cache = redis.Redis(host='redis', port=6379, decode_responses=True)
+response = []
+response.append(requests.post('http://elasticsearch:9200/atascos*/_async_search?batched_reduce_size=64&ccs_minimize_roundtrips=true&wait_for_completion_timeout=200ms&keep_on_completion=false&keep_alive=60000ms&ignore_unavailable=true',
+    json={
+  "aggs": {
+    "0": {
+      "terms": {
+        "field": "AtascoFinal.city.keyword",
+        "order": {
+          "1": "desc"
+        },
+        "size": 300,
+        "shard_size": 1000
+      },
+      "aggs": {
+        "1": {
+          "cardinality": {
+            "field": "AtascoFinal.count"
+          }
+        }
+      }
+    }
+  },
+  "size": 0,
+  "_source": {
+    "excludes": []
+  },
+  "query": {
+    "bool": {
+      "must": [],
+      "filter": [],
+      "should": [],
+      "must_not": []
+    }
+  },
+  "stored_fields": [
+    "*"
+  ],
+  "runtime_mappings": {},
+  "script_fields": {},
+  "fields": []
+}))
+cache.set('atascos_ciudad', json.dumps(response[0].json()))
+response.append(requests.post('http://elasticsearch:9200/atascos*/_async_search?batched_reduce_size=64&ccs_minimize_roundtrips=true&wait_for_completion_timeout=200ms&keep_on_completion=false&keep_alive=60000ms&ignore_unavailable=true',
+json={
+  "aggs": {
+    "0": {
+      "terms": {
+        "field": "AtascoFinal.street.keyword",
+        "order": {
+          "1.50": "desc"
+        },
+        "size": 50
+      },
+      "aggs": {
+        "1": {
+          "percentiles": {
+            "field": "AtascoFinal.count",
+            "percents": [
+              50
+            ]
+          }
+        }
+      }
+    }
+  },
+  "size": 0,
+  "_source": {
+    "excludes": []
+  },
+  "query": {
+    "bool": {
+      "must": [],
+      "filter": [],
+      "should": [],
+      "must_not": []
+    }
+  },
+  "stored_fields": [
+    "*"
+  ],
+  "runtime_mappings": {},
+  "script_fields": {},
+  "fields": []
+}))
+cache.set('atascos_calle', json.dumps(response[1].json()))
+response.append(requests.post('http://elasticsearch:9200/incidentes*/_async_search?batched_reduce_size=64&ccs_minimize_roundtrips=true&wait_for_completion_timeout=200ms&keep_on_completion=false&keep_alive=60000ms&ignore_unavailable=true',
+  json={
+  "aggs": {
+    "0": {
+      "terms": {
+        "field": "IncidentesFinal.street.keyword",
+        "order": {
+          "1.50": "desc"
+        },
+        "size": 500
+      },
+      "aggs": {
+        "1": {
+          "percentiles": {
+            "field": "IncidentesFinal.count",
+            "percents": [
+              50
+            ]
+          }
+        }
+      }
+    }
+  },
+  "size": 0,
+  "_source": {
+    "excludes": []
+  },
+  "query": {
+    "bool": {
+      "must": [],
+      "filter": [],
+      "should": [],
+      "must_not": []
+    }
+  },
+  "stored_fields": [
+    "*"
+  ],
+  "runtime_mappings": {},
+  "script_fields": {},
+  "fields": []
+}))
+cache.set('incidentes_ciudad', json.dumps(response[2].json()))
+response.append(requests.post('http://elasticsearch:9200/incidentes*/_async_search?batched_reduce_size=64&ccs_minimize_roundtrips=true&wait_for_completion_timeout=200ms&keep_on_completion=false&keep_alive=60000ms&ignore_unavailable=true',
+  json={
+  "aggs": {
+    "0": {
+      "terms": {
+        "field": "IncidentesFinal.street.keyword",
+        "order": {
+          "1": "desc"
+        },
+        "size": 300
+      },
+      "aggs": {
+        "1": {
+          "value_count": {
+            "field": "IncidentesFinal.count"
+          }
+        }
+      }
+    }
+  },
+  "size": 0,
+  "_source": {
+    "excludes": []
+  },
+  "query": {
+    "bool": {
+      "must": [],
+      "filter": [],
+      "should": [],
+      "must_not": []
+    }
+  },
+  "stored_fields": [
+    "*"
+  ],
+  "runtime_mappings": {},
+  "script_fields": {},
+  "fields": []
+}))
+cache.set('incidentes_calle', json.dumps(response[3].json()))
+response.append(requests.post('http://elasticsearch:9200/incidentes*/_async_search?batched_reduce_size=64&ccs_minimize_roundtrips=true&wait_for_completion_timeout=200ms&keep_on_completion=false&keep_alive=60000ms&ignore_unavailable=true',
+  json={
+  "aggs": {
+    "0": {
+      "terms": {
+        "field": "IncidentesFinal.type.keyword",
+        "order": {
+          "1": "desc"
+        },
+        "size": 3,
+        "shard_size": 25
+      },
+      "aggs": {
+        "1": {
+          "value_count": {
+            "field": "IncidentesFinal.count"
+          }
+        }
+      }
+    }
+  },
+  "size": 0,
+  "_source": {
+    "excludes": []
+  },
+  "query": {
+    "bool": {
+      "must": [],
+      "filter": [],
+      "should": [],
+      "must_not": []
+    }
+  },
+  "stored_fields": [
+    "*"
+  ],
+  "runtime_mappings": {},
+  "script_fields": {},
+  "fields": []
+}))
+cache.set('incidentes_type', json.dumps(response[4].json()))

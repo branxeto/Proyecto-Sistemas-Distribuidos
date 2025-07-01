@@ -1,4 +1,19 @@
 services:
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - elasticsearch-net
+  redisInsight:
+    container_name: redisInsight
+    image: redis/redisinsight
+    ports:
+      - "5540:5540"
+    networks:
+      - elasticsearch-net
   elasticsearch:
     container_name: elasticsearch
     image: elasticsearch:9.0.2
